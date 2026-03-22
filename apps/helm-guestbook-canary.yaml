@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: helm-guestbook-canary
+  namespace: argocd
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: https://github.com/audif90/argocd-example-apps
+    targetRevision: HEAD
+    path: helm-guestbook
+    helm:
+      parameters:
+        - name: replicaCount
+          value: "2"
+        - name: image.tag
+          value: "0.2"
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
