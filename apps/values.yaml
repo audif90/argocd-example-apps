@@ -12,10 +12,10 @@ applications:
       helm:
         releaseName: blue-green
   - name: guestbook
-  - name: helm-dependency
-    tool:
-      helm:
-        releaseName: helm-dependency
+  # - name: helm-dependency
+  #   tool:
+  #     helm:
+  #       releaseName: helm-dependency
   - name: helm-guestbook
     tool:
       helm:
@@ -40,5 +40,5 @@ applications:
       plugin:
         name: nix
   - name: pre-post-sync
-  - name: sock-shop
+  # - name: sock-shop
   - name: sync-waves
