@@ -40,5 +40,5 @@ applications:
       plugin:
         name: nix
   - name: pre-post-sync
-  - name: sock-shop
+  # - name: sock-shop
   - name: sync-waves
