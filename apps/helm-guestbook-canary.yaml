@@ -4,22 +4,30 @@ metadata:
   name: helm-guestbook-canary
   namespace: argocd
 spec:
-  destination:
-    server: https://kubernetes.default.svc
+  project: default
   source:
     repoURL: https://github.com/audif90/argocd-example-apps
     targetRevision: HEAD
     path: helm-guestbook
     helm:
-      parameters:
-        - name: replicaCount
-          value: "2"
-        - name: image.tag
-          value: "0.2"
-  project: default
+      values: |
+        # 1. Mencegah bentrok nama dengan Deployment Prod!
+        fullnameOverride: "helm-guestbook-canary"
+        replicaCount: 1
+        image:
+          tag: "0.2"
+        # 2. Resource Limits
+        resources:
+          requests:
+            cpu: "50m"
+            memory: "64Mi"
+          limits:
+            cpu: "100m"
+            memory: "128Mi"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: guestbook # <-- Disatukan kembali ke namespace Production
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
