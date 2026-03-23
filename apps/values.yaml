@@ -17,9 +17,21 @@ applications:
   #     helm:
   #       releaseName: helm-dependency
   - name: helm-guestbook
+    namespace: helm-guestbook
     tool:
       helm:
         releaseName: helm-guestbook
+        valueFiles:
+          - values.yaml
+          - values-production.yaml
+  - name: helm-guestbook-canary
+    namespace: helm-guestbook
+    tool:
+      helm:
+        releaseName: helm-guestbook-canary
+        valueFiles:
+          - values.yaml
+          - values-canary.yaml
   - name: helm-hooks
   - name: jsonnet-guestbook
   - name: jsonnet-guestbook-tla
