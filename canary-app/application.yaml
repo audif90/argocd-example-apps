@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/audif90/rollouts-demo # 
+    repoURL: https://github.com/audif90/argocd-example-apps # Repo infra-mu
     targetRevision: HEAD
-    path: . # Membaca file yaml di root directory rollouts-demo
+    path: rollout-manifests # Mengarah ke folder yang berisi rollout.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: rollouts-demo
