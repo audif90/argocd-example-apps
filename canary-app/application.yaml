@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rollouts-demo
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/audif90/rollouts-demo # 
+    targetRevision: HEAD
+    path: . # Membaca file yaml di root directory rollouts-demo
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: rollouts-demo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
