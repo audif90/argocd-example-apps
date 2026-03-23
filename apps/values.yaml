@@ -18,6 +18,7 @@ applications:
   #       releaseName: helm-dependency
   - name: helm-guestbook
     namespace: helm-guestbook
+    path: helm-guestbook
     tool:
       helm:
         releaseName: helm-guestbook
@@ -26,6 +27,7 @@ applications:
           - values-production.yaml
   - name: helm-guestbook-canary
     namespace: helm-guestbook
+    path: helm-guestbook
     tool:
       helm:
         releaseName: helm-guestbook-canary
