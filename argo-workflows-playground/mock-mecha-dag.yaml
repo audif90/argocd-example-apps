@@ -1,0 +1,61 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: mecha-factory-pipeline- 
+  namespace: argo
+spec:
+  entrypoint: main-dag
+  
+  templates:
+  - name: main-dag
+    dag:
+      tasks:
+      - name: download-spec
+        template: dummy-worker
+        arguments:
+          parameters: 
+          - name: message
+            value: "1. Downloading machine specs..."
+          - name: delay
+            value: "3"
+
+      - name: render-3d
+        dependencies: [download-spec] # Tunggu download selesai
+        template: dummy-worker
+        arguments:
+          parameters: 
+          - name: message
+            value: "2a. Rendering 3D model (Parallel)..."
+          - name: delay
+            value: "7"
+
+      - name: calc-cost
+        dependencies: [download-spec] # Jalan bareng render-3d
+        template: dummy-worker
+        arguments:
+          parameters: 
+          - name: message
+            value: "2b. Calculating steel material costs (Parallel)..."
+          - name: delay
+            value: "4"
+
+      - name: generate-report
+        dependencies: [render-3d, calc-cost] # Menunggu KEDUANYA selesai
+        template: dummy-worker
+        arguments:
+          parameters: 
+          - name: message
+            value: "3. Combining PDF Report. Done!"
+          - name: delay
+            value: "2"
+
+  # --- INI ADALAH TEMPLATE WORKER (PEKERJANYA) ---
+  - name: dummy-worker
+    inputs:
+      parameters:
+      - name: message
+      - name: delay
+    container:
+      image: alpine:latest
+      command: [sh, -c]
+      args: ["echo \"{{inputs.parameters.message}}\"; sleep {{inputs.parameters.delay}}"]
