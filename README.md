@@ -1,3 +1,5 @@
+ここの自分で書いたコードは、ほとんど60〜70％AIに手伝ってもらいました。
+
 # Argo CD Example Apps
 
 This repository contains example applications for demoing Argo CD functionality. Feel free
