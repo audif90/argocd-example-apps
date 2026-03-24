@@ -1,0 +1,71 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: dynamic-mecha-fanout-
+  namespace: argo
+spec:
+  entrypoint: main-dag
+  
+  templates:
+  # --- 1. MASTER PIPELINE ---
+  - name: main-dag
+    dag:
+      tasks:
+      - name: fetch-db-jobs
+        template: mock-db-query
+
+      - name: render-machine-parts
+        dependencies: [fetch-db-jobs]
+        template: worker-process
+        # INI SIHIRNYA: Kita tangkap hasil print JSON dari tugas sebelumnya
+        withParam: "{{tasks.fetch-db-jobs.outputs.result}}"
+        arguments:
+          parameters:
+          # Kita bedah JSON-nya dan suntikkan ke masing-masing Pod
+          - name: job-id
+            value: "{{item.id}}"
+          - name: part-name
+            value: "{{item.part}}"
+          - name: resolution
+            value: "{{item.res}}"
+
+  # --- 2. TEMPLATE KONEKSI DATABASE (PYTHON) ---
+  - name: mock-db-query
+    script:
+      image: python:3.9-alpine
+      command: [python]
+      source: |
+        import json
+        import sys
+        
+        # --- PSEUDOCODE KONEKSI DB NYATA ---
+        # db = connect("postgresql://user:pass@db:5432/mecha_factory")
+        # cursor = db.execute("SELECT id, part_name, resolution FROM render_jobs WHERE status='pending'")
+        # rows = cursor.fetchall()
+        
+        # --- MOCK DATA (Seolah-olah ini hasil query dari DB) ---
+        mock_rows = [
+          {"id": "JOB-001", "part": "Engine Core", "res": "4K"},
+          {"id": "JOB-002", "part": "Exhaust Pipe", "res": "1080p"},
+          {"id": "JOB-003", "part": "Cooling Fan", "res": "720p"}
+        ]
+        
+        # Argo akan menangkap apapun yang di-print ke stdout sebagai 'outputs.result'
+        json.dump(mock_rows, sys.stdout)
+
+  # --- 3. TEMPLATE PEKERJA (Bisa jadi puluhan/ratusan Pod) ---
+  - name: worker-process
+    inputs:
+      parameters:
+      - name: job-id
+      - name: part-name
+      - name: resolution
+    container:
+      image: alpine:latest
+      command: [sh, -c]
+      args: 
+        - "echo \"[Menerima Tugas {{inputs.parameters.job-id}}]\";
+           echo \"Mulai merender part: {{inputs.parameters.part-name}}\";
+           echo \"Setingan Resolusi : {{inputs.parameters.resolution}}\";
+           sleep 4;
+           echo \"Selesai! Menyimpan ke S3...\""
