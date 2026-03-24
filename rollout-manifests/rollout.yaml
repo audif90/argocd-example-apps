@@ -7,14 +7,13 @@ spec:
   strategy:
     canary:
       steps:
-      - setWeight: 20
+      - pause: {} # Mulai dengan 0% (semua traffic ke versi lama)
+      - setWeight: 10
       - pause: {} # Berhenti di 20% sampai kita klik "Promote" manual
-      - setWeight: 40
-      - pause: {duration: 10s} # Lanjut otomatis tiap 10 detik
-      - setWeight: 60
-      - pause: {duration: 10s}
-      - setWeight: 80
-      - pause: {duration: 10s}
+      - setWeight: 30
+      - pause: {} # Lanjut otomatis tiap 10 detik
+      - setWeight: 50
+      - pause: {}
   selector:
     matchLabels:
       app: rollouts-demo
@@ -25,8 +24,8 @@ spec:
     spec:
       containers:
       - name: rollouts-demo
-        # image: argoproj/rollouts-demo:blue # Versi awal: Biru
-        image: argoproj/rollouts-demo:yellow # Versi baru: Kuning
+        image: argoproj/rollouts-demo:blue # Versi awal: Biru
+        # image: argoproj/rollouts-demo:yellow # Versi baru: Kuning
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
