@@ -58,4 +58,4 @@ spec:
     container:
       image: alpine:latest
       command: [sh, -c]
-      args: ["echo {{inputs.parameters.message}}; sleep {{inputs.parameters.delay}}"]
+      args: ["echo \"{{inputs.parameters.message}}\"; sleep {{inputs.parameters.delay}}"]
